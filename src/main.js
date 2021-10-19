@@ -6,11 +6,18 @@ import router from './router'
 //引入element--s1
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-//e1
+
+import global from '@/utils/global'
+import api from './http'
+
 Vue.config.productionTip = false
 
 //引入element--s2
 Vue.use(ElementUI)//e2
+
+Vue.use(api)
+
+Vue.prototype.global = global
 
 /* eslint-disable no-new */
 new Vue({

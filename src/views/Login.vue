@@ -1,11 +1,83 @@
 <template>
-  <div class="page">
-    <h2>Login Page</h2>
-  </div>
+  <el-form :model="loginForm" :rules="fieldRules" ref="loginForm" label-position="left" label-width="0px" class="demo-ruleForm login-container">
+    <span class="tool-bar">
+    </span>
+    <h2 class="title" style="padding-left:22px;" >系统登录</h2>
+    <el-form-item prop="account">
+      <el-input type="text" v-model="loginForm.account" auto-complete="off" placeholder="账号"></el-input>
+    </el-form-item>
+    <el-form-item prop="password">
+      <el-input type="password" v-model="loginForm.password" auto-complete="off" placeholder="密码"></el-input>
+    </el-form-item>
+    <el-form-item >
+      <el-col :span="12">
+        <el-form-item prop="captcha">
+          <el-input type="test" v-model="loginForm.captcha" auto-complete="off" placeholder="验证码, 单击图片刷新"
+            style="width: 100%;">
+          </el-input>
+        </el-form-item>
+      </el-col>
+      <el-col class="line" :span="1">&nbsp;</el-col>
+      <el-col :span="11">
+        <el-form-item>
+            <img style="width: 100%;" class="pointer" :src="loginForm.src" @click="refreshCaptcha">
+        </el-form-item>
+      </el-col>
+    </el-form-item>
+    <el-form-item style="width:100%;">
+      <el-button type="primary" style="width:48%;" @click.native.prevent="reset">重 置</el-button>
+      <el-button type="primary" style="width:48%;" @click.native.prevent="login" :loading="loading">登 录</el-button>
+    </el-form-item>
+  </el-form>
 </template>
 
 <script>
+import Cookies from "js-cookie"
 export default {
-  name: 'Login'
+  name: 'Login',
+  data(){
+    return {
+      loading: false,
+      loginForm: {
+        account: 'admin',
+        password: 'admin',
+        captcha:'',
+        src: ''
+      },
+      fieldRules: {
+        account: [
+          { required: true, message: '请输入账号', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
+        ]
+      }
+    }
+  },
+  methods: {
+    login() {
+      this.loading = true
+      let userInfo = { account:this.loginForm.account, password:this.loginForm.password, 
+        captcha:this.loginForm.captcha }
+      this.$api.login.login(userInfo).then((res) => {  // 调用登录接口
+          if(res.msg != null) {
+            this.$message({ message: res.msg, type: 'error' })
+          } else {
+            Cookies.set('token', res.data.token) // 放置token到Cookie
+            sessionStorage.setItem('user', userInfo.account) // 保存用户到本地会话
+            this.$router.push('/')  // 登录成功，跳转到主页
+          }
+          this.loading = false
+        }).catch((res) => {
+          this.$message({ message: res.message, type: 'error' })
+        })
+    },
+    reset() {
+      this.$refs.loginForm.resetFields()
+    },
+    refreshCaptcha: function(){
+      this.loginForm.src = this.global.baseUrl + "/captcha.jpg?t=" + new Date().getTime();
+    }
+  }
 }
 </script>

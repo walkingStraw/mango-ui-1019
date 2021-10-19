@@ -7,14 +7,22 @@
 
 <script>
 import axios from 'axios'
-import mock from '@/mock/mock.js'
+import mock from '@/mock/index.js'
 export default {
   name: 'Home',
   methods: {
     testAxios() {
-      axios.get('http://localhost:8080/hello').then(
-        res => {alert(res.data.msg)}
-      )
+      // axios.get('http://localhost:8080/book').then(
+      //   res => {alert(JSON.stringify(res.data))}
+      // )
+
+      this.$api.book.bookName().then(function(res){
+        if(res.data){
+          alert(res.data.name)
+        }else{
+          alert(res)
+        }
+      })
     }
   }
 }
