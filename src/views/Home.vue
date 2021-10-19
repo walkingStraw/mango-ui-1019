@@ -7,12 +7,13 @@
 
 <script>
 import axios from 'axios'
+import mock from '@/mock/mock.js'
 export default {
   name: 'Home',
   methods: {
     testAxios() {
       axios.get('http://localhost:8080/hello').then(
-        res => {alert(res.data)}
+        res => {alert(res.data.msg)}
       )
     }
   }
