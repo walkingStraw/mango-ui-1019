@@ -10,6 +10,6 @@ export function bookName() {
     url: 'book',
     type: 'get',
     data: bookData,
-    isOpen: false
+    // isOpen: false
   }
 }
